@@ -40,7 +40,7 @@ def loop_resolve(f, resolution, lim, *args):
 def get_windows_browser():
     service = Service()
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless') # to debug, comment this line
+    #options.add_argument('--headless') # to debug, comment this line
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     browser = webdriver.Chrome(service=service, options=options)
     return browser

@@ -1,4 +1,4 @@
-name: otherwordly squardle
+name: otherworldly squardle
 on:
   workflow_dispatch:
 jobs:
@@ -19,7 +19,7 @@ jobs:
           sudo apt install -y chromium-browser
           pip install -r requirements.txt
       - name: It's Squardlin time!
-        run: python main.py otherwordly
+        run: python main.py otherworldly
         env:
           TOKEN: ${{ secrets.TOKEN }}
           CHATS: ${{ secrets.CHATS }}
