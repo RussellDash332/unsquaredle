@@ -76,10 +76,18 @@ def solve(mode, supplier):
             f'?puzzle={mode}'
         ))
         time.sleep(2)
-        logging.info('Skipping tutorial...')
-        browser.find_element(By.CLASS_NAME, "skipTutorial").click()
-        browser.find_element(By.ID, "confirmAccept").click()
-        time.sleep(2)
+        try:
+            logging.info('Skipping tutorial...')
+            browser.find_element(By.CLASS_NAME, "skipTutorial").click()
+            browser.find_element(By.ID, "confirmAccept").click()
+            time.sleep(2)
+        except:
+            popups = browser.find_elements(By.CLASS_NAME, 'popup')
+            for popup in popups:
+                if popup.is_displayed():
+                    close = popup.find_element(By.CLASS_NAME, 'closeBtn')
+                    ActionChains(browser).move_to_element(close).click(close).perform()
+                    time.sleep(0.3)
     except Exception as e:
         logging.info(f'{type(e).__name__}: {e}')
         browser.quit()
@@ -92,7 +100,7 @@ def solve(mode, supplier):
 
     sq = ''.join(s.find(class_='unnecessaryWrapper').contents[0] for s in soup.find('div', class_='board').findAll('div', class_='letter'))
     lengths = [int(s.contents[0].strip('letters')) for s in soup.find('div', class_='wordLengths').findAll('h3') if s.contents[0].endswith('letters')]
-    try: bonus = soup.find('div', class_='wordLengths').find('li').contents[0]
+    try: bonus = soup.find('div', class_='wordLengths').find('li').contents[0].split()[0]
     except: bonus = ''
     max_len = max(max(lengths), len(bonus))
     logging.info(f'Squardle is "{sq}" and maximum length is {max_len}')
@@ -158,6 +166,7 @@ if __name__ == '__main__':
     supplier = {'Windows': get_windows_browser, 'Linux': get_linux_browser}.get(curr_os)
     assert supplier, f'Unsquardle not supported for {curr_os} yet :('
 
+    # populate word list, might take a while :)
     ss = set()
     urls = [
         'https://github.com/dwyl/english-words/raw/master/words_alpha.txt',
@@ -166,11 +175,18 @@ if __name__ == '__main__':
         'https://github.com/charlesreid1/five-letter-words/blob/master/sgb-words.txt',
         'https://github.com/powerlanguage/word-lists/blob/master/common-7-letter-words.txt',
         'https://github.com/powerlanguage/word-lists/blob/master/word-list-7-letters.txt',
-        'https://github.com/powerlanguage/word-lists/raw/master/word-list-raw.txt'
+        'https://github.com/powerlanguage/word-lists/raw/master/word-list-raw.txt',
+        'https://github.com/sadamson/longest-word/raw/master/usa.txt',
+        'https://github.com/sadamson/longest-word/raw/master/dict.txt',
+        'https://github.com/first20hours/google-10000-english/blob/master/google-10000-english.txt',
+        'https://github.com/first20hours/google-10000-english/blob/master/google-10000-english-usa.txt'
     ]
     for url in urls:
-        try: ss |= {*(i for i in requests.get(url).content.decode().upper().split() if i.isalpha())}
+        try: ss |= {*(i for i in requests.get(url).content.decode().upper().split() if i.isalpha() and len(i)>3)}
         except: pass
+    for length in range(4, 53):
+        r = requests.get(f'https://www.litscape.com/words/length/{length}_letters/{length}_letter_words.html')
+        if r.ok: ss |= {w for w in r.content.decode().split() if len(w)==length and w.isalpha()}
     logging.info(f'Database of {len(ss)} words loaded!')
 
     mode = get_mode()
@@ -190,5 +206,7 @@ if __name__ == '__main__':
              .replace('(', '\\(') \
              .replace(')', '\\)') \
              .replace('#', '\\#') \
-             .replace('+', '\\+')
+             .replace('+', '\\+') \
+             .replace('-', '\\-') \
+             .replace('=', '\\=')
         )
