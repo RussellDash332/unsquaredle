@@ -179,7 +179,9 @@ if __name__ == '__main__':
         'https://github.com/sadamson/longest-word/raw/master/usa.txt',
         'https://github.com/sadamson/longest-word/raw/master/dict.txt',
         'https://github.com/first20hours/google-10000-english/blob/master/google-10000-english.txt',
-        'https://github.com/first20hours/google-10000-english/blob/master/google-10000-english-usa.txt'
+        'https://github.com/first20hours/google-10000-english/blob/master/google-10000-english-usa.txt',
+        'https://github.com/matthewreagan/WebstersEnglishDictionary/raw/master/WebstersEnglishDictionary.txt',
+        'https://foldoc.org/Dictionary'
     ]
     for url in urls:
         try: ss |= {*(i for i in requests.get(url).content.decode().upper().split() if i.isalpha() and len(i)>3)}
