@@ -23,7 +23,7 @@ logging.basicConfig(
 __VERSION__ = '116.0.5845'
 
 def get_mode():
-    if len(sys.argv) == 1:  mode = 'xp'
+    if len(sys.argv) == 1:  mode = 'daily'
     else:                   mode = sys.argv[1].strip()
     return mode
 
@@ -71,7 +71,7 @@ def solve(mode, supplier):
     try:
         logging.info('Getting HTML source page...')
         browser.get('https://squaredle.app/' + (
-            '' if mode == 'default' else
+            '' if mode == 'daily' else
             '?level=xp' if mode == 'xp' else
             f'?puzzle={mode}'
         ))
