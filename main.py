@@ -149,9 +149,9 @@ def send(token, chat_id, bot_message):
         'chat_id': chat_id,
         'parse_mode': 'MarkdownV2',
         'text': bot_message,
-        'disable_web_page_preview': True
+        'disable_web_page_preview': False
         })
-    logging.info(resp.ok)
+    logging.info(resp.json().get('description') if not resp.ok else resp.ok)
 
 if __name__ == '__main__':
     curr_os = (pf:=platform.platform())[:pf.find('-')]
@@ -183,4 +183,12 @@ if __name__ == '__main__':
     print(verdict)
 
     # Telebot integration
-    for chat_id in CHATS.split(','): send(TOKEN, chat_id, f'{verdict}\n#unsquardle')
+    for chat_id in CHATS.split(','):
+        send(TOKEN, chat_id, f'{verdict}\n#unsquardle' \
+             .replace('.', '\\.') \
+             .replace('*', '\\*') \
+             .replace('(', '\\(') \
+             .replace(')', '\\)') \
+             .replace('#', '\\#') \
+             .replace('+', '\\+')
+        )
