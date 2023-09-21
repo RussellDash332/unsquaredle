@@ -138,10 +138,15 @@ def solve(mode, supplier):
         ActionChains(browser).send_keys(Keys.ENTER).perform()
         for popup in popups:
             if popup.is_displayed():
-                close = popup.find_element(By.CLASS_NAME, 'closeBtn')
-                ActionChains(browser).move_to_element(close).click(close).perform()
-                time.sleep(0.3)
+                for _ in range(3):
+                    try:
+                        close = popup.find_element(By.CLASS_NAME, 'closeBtn')
+                        ActionChains(browser).move_to_element(close).click(close).perform()
+                    except: pass
+                    time.sleep(0.3)
         try: browser.find_element(By.ID, 'explainerPermaClose').click()
+        except: pass
+        try: browser.find_element(By.ID, 'explainerClose').click()
         except: pass
 
     # share results!
