@@ -1,4 +1,4 @@
-name: spooky squardle
+name: spooky squaredle
 on:
   workflow_dispatch:
 jobs:

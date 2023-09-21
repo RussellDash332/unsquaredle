@@ -1,4 +1,4 @@
-name: uk squardle
+name: uk squaredle
 on:
   workflow_dispatch:
 jobs:

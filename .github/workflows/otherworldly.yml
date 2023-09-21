@@ -1,4 +1,4 @@
-name: otherworldly squardle
+name: otherworldly squaredle
 on:
   workflow_dispatch:
 jobs:

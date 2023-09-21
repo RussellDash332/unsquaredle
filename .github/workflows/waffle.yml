@@ -1,4 +1,4 @@
-name: waffle squardle
+name: waffle squaredle
 on:
   workflow_dispatch:
 jobs:

@@ -1,4 +1,4 @@
-name: kwanzaa squardle
+name: kwanzaa squaredle
 on:
   workflow_dispatch:
 jobs:

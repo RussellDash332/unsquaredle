@@ -103,9 +103,9 @@ def solve(mode, supplier):
     try: bonus = soup.find('div', class_='wordLengths').find('li').contents[0].split()[0]
     except: bonus = ''
     max_len = max(max(lengths), len(bonus))
-    logging.info(f'Squardle is "{sq}" and maximum length is {max_len}')
+    logging.info(f'Squaredle is "{sq}" and maximum length is {max_len}')
 
-    # prep Unsquardle
+    # prep Unsquaredle
     t2 = time.time()
     n = round(len(sq)**0.5)
     g = [[] for _ in range(len(sq))]
@@ -194,12 +194,12 @@ if __name__ == '__main__':
 
     curr_os = (pf:=platform.platform())[:pf.find('-')]
     supplier = {'Windows': get_windows_browser, 'Linux': get_linux_browser}.get(curr_os)
-    assert supplier, f'Unsquardle not supported for {curr_os} yet :('
+    assert supplier, f'Unsquaredle not supported for {curr_os} yet :('
 
     mode = get_mode()
     t_parse, t_algo, t_selenium, verdict = loop_resolve(solve, lambda: None, 3, mode, supplier)
     print()
-    print(f'Time to parse Squardle board: {t_parse}')
+    print(f'Time to parse Squaredle board: {t_parse}')
     print(f'Time to run backtracking: {t_algo}')
     print(f'Time to apply candidate words on web: {t_selenium}')
     print()
@@ -207,7 +207,7 @@ if __name__ == '__main__':
 
     # Telebot integration
     for chat_id in CHATS.split(','):
-        send(TOKEN, chat_id, f'{verdict}\n#unsquardle' \
+        send(TOKEN, chat_id, f'{verdict}\n#unsquaredle' \
              .replace('.', '\\.') \
              .replace('*', '\\*') \
              .replace('(', '\\(') \

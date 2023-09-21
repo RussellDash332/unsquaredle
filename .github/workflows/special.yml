@@ -1,4 +1,4 @@
-name: special squardle
+name: special squaredle
 on:
   workflow_dispatch:
 jobs:

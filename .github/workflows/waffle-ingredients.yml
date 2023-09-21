@@ -1,4 +1,4 @@
-name: waffle-ingredients squardle
+name: waffle-ingredients squaredle
 on:
   workflow_dispatch:
 jobs:

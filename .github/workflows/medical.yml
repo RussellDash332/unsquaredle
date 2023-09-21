@@ -1,4 +1,4 @@
-name: medical squardle
+name: medical squaredle
 on:
   workflow_dispatch:
 jobs:

@@ -1,4 +1,4 @@
-name: xmas squardle
+name: xmas squaredle
 on:
   workflow_dispatch:
 jobs:

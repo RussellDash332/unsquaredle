@@ -1,4 +1,4 @@
-name: 10x10 squardle
+name: 10x10 squaredle
 on:
   workflow_dispatch:
 jobs:

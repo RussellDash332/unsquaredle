@@ -1,4 +1,4 @@
-name: discord200 squardle
+name: discord200 squaredle
 on:
   workflow_dispatch:
 jobs:

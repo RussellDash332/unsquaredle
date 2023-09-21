@@ -1,4 +1,4 @@
-name: sub50 squardle
+name: sub50 squaredle
 on:
   workflow_dispatch:
 jobs:

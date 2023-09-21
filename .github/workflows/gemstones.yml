@@ -1,4 +1,4 @@
-name: gemstones squardle
+name: gemstones squaredle
 on:
   workflow_dispatch:
 jobs:

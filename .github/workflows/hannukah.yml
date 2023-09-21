@@ -1,4 +1,4 @@
-name: hannukah squardle
+name: hannukah squaredle
 on:
   workflow_dispatch:
 jobs:

@@ -1,4 +1,4 @@
-name: valentine squardle
+name: valentine squaredle
 on:
   workflow_dispatch:
 jobs:
