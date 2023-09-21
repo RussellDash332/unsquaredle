@@ -189,7 +189,7 @@ if __name__ == '__main__':
     for length in range(4, 53):
         r = requests.get(f'https://www.litscape.com/words/length/{length}_letters/{length}_letter_words.html')
         if r.ok: ss |= {w for w in r.content.decode().upper().split() if len(w)==length and w.isalpha()}; logging.info(f'{len(ss)} {length}')
-        else: logging.info(f'{len(ss)} FAIL {length}')
+        else: logging.info(f'{len(ss)} FAIL ({r.status_code}) {length}')
     logging.info(f'Database of {len(ss)} words loaded!')
 
     curr_os = (pf:=platform.platform())[:pf.find('-')]
