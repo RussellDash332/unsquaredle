@@ -162,34 +162,33 @@ def send(token, chat_id, bot_message):
     logging.info(resp.json().get('description') if not resp.ok else resp.ok)
 
 if __name__ == '__main__':
-    curr_os = (pf:=platform.platform())[:pf.find('-')]
-    supplier = {'Windows': get_windows_browser, 'Linux': get_linux_browser}.get(curr_os)
-    assert supplier, f'Unsquardle not supported for {curr_os} yet :('
-
     # populate word list, might take a while :)
     ss = set()
     urls = [
+        'https://raw.githubusercontent.com/scrabblewords/scrabblewords/main/words/North-American/6-letter-stems.txt',
+        'https://raw.githubusercontent.com/scrabblewords/scrabblewords/main/words/North-American/7-letter-stems.txt',
+        'https://raw.githubusercontent.com/scrabblewords/scrabblewords/main/words/North-American/NSWL2020.txt',
+        'https://raw.githubusercontent.com/scrabblewords/scrabblewords/main/words/North-American/NWL2020.txt',
         'https://github.com/dwyl/english-words/raw/master/words_alpha.txt',
         'https://github.com/dwyl/english-words/raw/master/words.txt',
         'https://github.com/tabatkins/wordle-list/raw/main/words',
-        'https://github.com/charlesreid1/five-letter-words/blob/master/sgb-words.txt',
-        'https://github.com/powerlanguage/word-lists/blob/master/common-7-letter-words.txt',
-        'https://github.com/powerlanguage/word-lists/blob/master/word-list-7-letters.txt',
         'https://github.com/powerlanguage/word-lists/raw/master/word-list-raw.txt',
         'https://github.com/sadamson/longest-word/raw/master/usa.txt',
-        'https://github.com/sadamson/longest-word/raw/master/dict.txt',
-        'https://github.com/first20hours/google-10000-english/blob/master/google-10000-english.txt',
-        'https://github.com/first20hours/google-10000-english/blob/master/google-10000-english-usa.txt',
         'https://github.com/matthewreagan/WebstersEnglishDictionary/raw/master/WebstersEnglishDictionary.txt',
-        'https://foldoc.org/Dictionary'
+        'https://foldoc.org/Dictionary',
+        'https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt'
     ]
     for url in urls:
-        try: ss |= {*(i for i in requests.get(url).content.decode().upper().split() if i.isalpha() and len(i)>3)}
-        except: pass
+        try: ss |= {*(i for i in requests.get(url).content.decode().upper().replace('\n', ' ').split() if i.isalpha() and len(i)>3)}; logging.info(f'{len(ss)} {url}')
+        except: logging.info(f'{len(ss)} FAIL {url}')
     for length in range(4, 53):
         r = requests.get(f'https://www.litscape.com/words/length/{length}_letters/{length}_letter_words.html')
-        if r.ok: ss |= {w for w in r.content.decode().split() if len(w)==length and w.isalpha()}
+        if r.ok: ss |= {w for w in r.content.decode().upper().split() if len(w)==length and w.isalpha()}; logging.info(f'{len(ss)} {length}')
     logging.info(f'Database of {len(ss)} words loaded!')
+
+    curr_os = (pf:=platform.platform())[:pf.find('-')]
+    supplier = {'Windows': get_windows_browser, 'Linux': get_linux_browser}.get(curr_os)
+    assert supplier, f'Unsquardle not supported for {curr_os} yet :('
 
     mode = get_mode()
     t_parse, t_algo, t_selenium, verdict = loop_resolve(solve, lambda: None, 3, mode, supplier)
