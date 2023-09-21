@@ -184,11 +184,11 @@ if __name__ == '__main__':
         'https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt'
     ]
     for url in urls:
-        try: ss |= {*(i for i in requests.get(url).content.decode().upper().replace('\n', ' ').split() if i.isalpha() and len(i)>3)}; logging.info(f'{len(ss)} {url}')
+        try: ss |= {*(i for i in requests.get(url).content.decode().upper().replace('\n', ' ').split() if all('A'<=l<='Z' for l in i) and len(i)>3)}; logging.info(f'{len(ss)} {url}')
         except: logging.info(f'{len(ss)} FAIL {url}')
     for length in range(4, 53):
         r = requests.get(f'https://www.litscape.com/words/length/{length}_letters/{length}_letter_words.html')
-        if r.ok: ss |= {w for w in r.content.decode().upper().split() if len(w)==length and w.isalpha()}; logging.info(f'{len(ss)} {length}')
+        if r.ok: ss |= {w for w in r.content.decode().upper().replace('\n', ' ').replace('<', ' ').replace('>', ' ').split() if len(w)==length and all('A'<=l<='Z' for l in w)}; logging.info(f'{len(ss)} {length}')
         else: logging.info(f'{len(ss)} FAIL ({r.status_code}) {length}')
     logging.info(f'Database of {len(ss)} words loaded!')
 
