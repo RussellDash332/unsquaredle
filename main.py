@@ -189,7 +189,7 @@ def solve(mode, supplier):
     time.sleep(1) # wait to load if you are on top of some category
     soup = BeautifulSoup(browser.page_source, 'html.parser')
     try:
-        result = [*filter(lambda x: all('A'<=i<='Z' for i in x), (str(s.contents[0]).strip().split()[0].upper() for s in soup.findAll('li') if str(s.contents[0]).strip()))]
+        result = [*filter(lambda x: all('A'<=i<='Z' for i in x), (str(s.find('a').contents[0]).strip().split()[0].upper() for s in soup.find('div', class_='wordLengths').findAll('li') if s.find('a') and str(s.find('a').contents[0]).strip()))]
         for w in result: print(len(w), w)
         logging.info('Obtained finalized list of words')
     except:
