@@ -77,12 +77,12 @@ def solve(mode, supplier):
             '?level=xp' if mode == 'xp' else
             f'?puzzle={mode}'
         ))
-        time.sleep(2)
+        time.sleep(5)
         try:
             logging.info('Skipping tutorial...')
             browser.find_element(By.CLASS_NAME, "skipTutorial").click()
             browser.find_element(By.ID, "confirmAccept").click()
-            time.sleep(2)
+            time.sleep(5)
         except:
             logging.info('Closing popup...')
             popups = browser.find_elements(By.CLASS_NAME, 'popup')
@@ -90,15 +90,17 @@ def solve(mode, supplier):
                 if popup.is_displayed():
                     close = popup.find_element(By.CLASS_NAME, 'closeBtn')
                     ActionChains(browser).move_to_element(close).click(close).perform()
-                    time.sleep(0.3)
-        try:
-            logging.info('Checking if we can reveal first letters...')
-            checklist = browser.find_element(By.ID, 'hintFirstLetters')
-            ActionChains(browser).move_to_element(checklist).click(checklist).perform()
-            has_hint = True
-        except:
-            logging.info('First letter hint not available...')
-            has_hint = False
+                    time.sleep(0.5)
+        for _ in range(3):
+            try:
+                logging.info('Checking if we can reveal first letters...')
+                checklist = browser.find_element(By.ID, 'hintFirstLetters')
+                ActionChains(browser).move_to_element(checklist).click(checklist).perform()
+                has_hint = True; break
+            except:
+                logging.info('First letter hint not available...')
+                has_hint = False
+            time.sleep(0.5)
     except Exception as e:
         logging.info(f'{type(e).__name__}: {e}')
         browser.quit()
@@ -158,6 +160,7 @@ def solve(mode, supplier):
                     bt2(i, w)
                     if w in ans: break
                 if w in ans: print(wh, w)
+    ans |= {w+'S' for w in ans if w[-1] != 'S'} | {w+'ES' for w in ans if w[-1] in 'SX' or w[-2:] in ('SH', 'CH', 'SS')} # handle plurals?
     ans = sorted(ans); ans.extend(ans[:3]) # retry first few for a good measure
     logging.info(f'Found {len(ans)} candidate words!')
 
@@ -176,7 +179,7 @@ def solve(mode, supplier):
                             close = popup.find_element(By.CLASS_NAME, 'closeBtn')
                             ActionChains(browser).move_to_element(close).click(close).perform()
                         except: pass
-                        time.sleep(0.3)
+                        time.sleep(0.5)
             try: browser.find_element(By.ID, 'explainerPermaClose').click()
             except: pass
             try: browser.find_element(By.ID, 'explainerClose').click()
@@ -187,6 +190,12 @@ def solve(mode, supplier):
     browser.find_element(By.XPATH, '/html/body/header/div/div[2]/button[2]').click() # it doesn't work without xpath?
     time.sleep(1) # wait to load if you are on top of some category
     soup = BeautifulSoup(browser.page_source, 'html.parser')
+    try:
+        result = [*filter(lambda x: all('A'<=i<='Z' for i in x), (str(s.contents[0]).strip().split()[0].upper() for s in soup.findAll('li') if str(s.contents[0]).strip()))]
+        for w in result: print(len(w), w)
+        logging.info('Obtained finalized list of words')
+    except:
+        logging.info('Cannot obtain finalized list of words')
     browser.quit()
     return round(t2-t1, 5), round(t3-t2, 5), round(t4-t1, 5), '\n'.join(soup.find('pre').contents)
 
