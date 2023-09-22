@@ -119,11 +119,11 @@ def solve(mode, supplier):
     # prep Unsquaredle
     t2 = time.time()
     long_words = set()
-    if has_hint:
+    n = round(len(sq)**0.5)
+    if has_hint and n > 5:
         max_len = min(max_len, DEPTH_LIMIT) # bonus word VS runtime trade-off
         long_words = {*filter(lambda x: '*' in x and len(x)>max_len, (str(s.contents[0]).strip().split()[0].upper() for s in soup.findAll('li') if str(s.contents[0]).strip()))}
 
-    n = round(len(sq)**0.5)
     g = [[] for _ in range(len(sq))]
     for i in range(n-1):
         for j in range(n): g[n*i+j].append(n*i+n+j), g[n*i+n+j].append(n*i+j), g[n*j+i].append(n*j+i+1), g[n*j+i+1].append(n*j+i)
