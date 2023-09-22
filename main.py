@@ -142,7 +142,6 @@ def solve(mode, supplier):
         if (ww:=''.join(w)) in ss: ans.add(ww)
         for nxt in g[idx]: bt(nxt, bm, w)
         bm ^= 1<<idx; w.pop()
-
     def bt2(idx, target, bm=bm0, w=[]):
         if (1<<idx)&bm or len(w)>len(target) or (w and w[-1]!=target[len(w)-1]) or target in ans: return
         w.append(sq[idx]); bm |= 1<<idx
@@ -151,7 +150,7 @@ def solve(mode, supplier):
         bm ^= 1<<idx; w.pop()
 
     for i in range(len(sq)): bt(i)
-    for wh in long_words:
+    for wh in sorted(long_words):
         ll, rr = wh.find('*'), wh.rfind('*')
         wl, wr = wh[:ll], wh[rr+1:]
         for w in ss:
@@ -160,7 +159,6 @@ def solve(mode, supplier):
                     bt2(i, w)
                     if w in ans: break
                 if w in ans: print(wh, w)
-    ans |= {w+'S' for w in ans if w[-1] != 'S'} | {w+'ES' for w in ans if w[-1] in 'SX' or w[-2:] in ('SH', 'CH', 'SS')} # handle plurals?
     ans = sorted(ans); ans.extend(ans[:3]) # retry first few for a good measure
     logging.info(f'Found {len(ans)} candidate words!')
 
@@ -228,10 +226,15 @@ if __name__ == '__main__':
     for url in urls:
         try: ss |= {*(i for i in requests.get(url).content.decode().upper().replace('\n', ' ').split() if all('A'<=l<='Z' for l in i) and len(i)>3)}; logging.info(f'{len(ss)} {url}')
         except: logging.info(f'{len(ss)} FAIL {url}')
+    # GH keeps throwing a 403 error so let's not do this
+    '''
     for length in range(4, 53):
         r = requests.get(f'https://www.litscape.com/words/length/{length}_letters/{length}_letter_words.html')
         if r.ok: ss |= {w for w in r.content.decode().upper().replace('\n', ' ').replace('<', ' ').replace('>', ' ').split() if len(w)==length and all('A'<=l<='Z' for l in w)}; logging.info(f'{len(ss)} {length}')
         else: logging.info(f'{len(ss)} FAIL ({r.status_code}) {length}')
+    '''
+    ss |= set(w.strip() for w in open('data/litscape.txt').readlines())
+    ss |= set(w.strip() for w in open('data/special.txt').readlines())
     logging.info(f'Database of {len(ss)} words loaded!')
 
     curr_os = (pf:=platform.platform())[:pf.find('-')]
