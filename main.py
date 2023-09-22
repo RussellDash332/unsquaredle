@@ -20,7 +20,9 @@ logging.basicConfig(
     datefmt='%H:%M:%S'
 )
 
+# Constants
 __VERSION__ = '116.0.5845'
+DEPTH_LIMIT = 7
 
 def get_mode():
     if len(sys.argv) == 1:  mode = 'daily'
@@ -82,12 +84,21 @@ def solve(mode, supplier):
             browser.find_element(By.ID, "confirmAccept").click()
             time.sleep(2)
         except:
+            logging.info('Closing popup...')
             popups = browser.find_elements(By.CLASS_NAME, 'popup')
             for popup in popups:
                 if popup.is_displayed():
                     close = popup.find_element(By.CLASS_NAME, 'closeBtn')
                     ActionChains(browser).move_to_element(close).click(close).perform()
                     time.sleep(0.3)
+        try:
+            logging.info('Checking if we can reveal first letters...')
+            checklist = browser.find_element(By.ID, 'hintFirstLetters')
+            ActionChains(browser).move_to_element(checklist).click(checklist).perform()
+            has_hint = True
+        except:
+            logging.info('First letter hint not available...')
+            has_hint = False
     except Exception as e:
         logging.info(f'{type(e).__name__}: {e}')
         browser.quit()
@@ -107,6 +118,11 @@ def solve(mode, supplier):
 
     # prep Unsquaredle
     t2 = time.time()
+    long_words = set()
+    if has_hint:
+        max_len = min(max_len, DEPTH_LIMIT) # bonus word VS runtime trade-off
+        long_words = {*filter(lambda x: '*' in x and len(x)>max_len, (str(s.contents[0]).strip().split()[0].upper() for s in soup.findAll('li') if str(s.contents[0]).strip()))}
+
     n = round(len(sq)**0.5)
     g = [[] for _ in range(len(sq))]
     for i in range(n-1):
@@ -116,17 +132,33 @@ def solve(mode, supplier):
     bm0 = 0 # making mask for non-tiles
     for i in range(len(sq)):
         if sq[i] == ' ': bm0 |= 1<<i
-    
-    ans = []
+
+    ans = set()
     def bt(idx, bm=bm0, w=[]):
         if (1<<idx)&bm or len(w)>max_len: return
         w.append(sq[idx]); bm |= 1<<idx
-        if len(w)>3 and (ww:=''.join(w)) in ss: ans.append(ww)
+        if (ww:=''.join(w)) in ss: ans.add(ww)
         for nxt in g[idx]: bt(nxt, bm, w)
         bm ^= 1<<idx; w.pop()
 
+    def bt2(idx, target, bm=bm0, w=[]):
+        if (1<<idx)&bm or len(w)>len(target) or (w and w[-1]!=target[len(w)-1]) or target in ans: return
+        w.append(sq[idx]); bm |= 1<<idx
+        if (ww:=''.join(w)) == target: ans.add(ww)
+        for nxt in g[idx]: bt2(nxt, target, bm, w)
+        bm ^= 1<<idx; w.pop()
+
     for i in range(len(sq)): bt(i)
-    ans = sorted({*ans})
+    for wh in long_words:
+        ll, rr = wh.find('*'), wh.rfind('*')
+        wl, wr = wh[:ll], wh[rr+1:]
+        for w in ss:
+            if len(w) == len(wh) and w.startswith(wl) and w.endswith(wr):
+                for i in range(len(sq)):
+                    bt2(i, w)
+                    if w in ans: break
+                if w in ans: print(wh, w)
+    ans = sorted(ans); ans.extend(ans[:3]) # retry first few for a good measure
     logging.info(f'Found {len(ans)} candidate words!')
 
     # try all!
@@ -134,20 +166,21 @@ def solve(mode, supplier):
     popups = browser.find_elements(By.CLASS_NAME, 'popup')
     for i in ans:
         print(i)
-        ActionChains(browser).send_keys(i).perform()
-        ActionChains(browser).send_keys(Keys.ENTER).perform()
-        for popup in popups:
-            if popup.is_displayed():
-                for _ in range(3):
-                    try:
-                        close = popup.find_element(By.CLASS_NAME, 'closeBtn')
-                        ActionChains(browser).move_to_element(close).click(close).perform()
-                    except: pass
-                    time.sleep(0.3)
-        try: browser.find_element(By.ID, 'explainerPermaClose').click()
-        except: pass
-        try: browser.find_element(By.ID, 'explainerClose').click()
-        except: pass
+        for _ in range(2):
+            ActionChains(browser).send_keys(i).perform()
+            ActionChains(browser).send_keys(Keys.ENTER).perform()
+            for popup in popups:
+                if popup.is_displayed():
+                    for _ in range(3):
+                        try:
+                            close = popup.find_element(By.CLASS_NAME, 'closeBtn')
+                            ActionChains(browser).move_to_element(close).click(close).perform()
+                        except: pass
+                        time.sleep(0.3)
+            try: browser.find_element(By.ID, 'explainerPermaClose').click()
+            except: pass
+            try: browser.find_element(By.ID, 'explainerClose').click()
+            except: pass
 
     # share results!
     t4 = time.time()
