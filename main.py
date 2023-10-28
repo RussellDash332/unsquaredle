@@ -21,7 +21,8 @@ logging.basicConfig(
 )
 
 # Constants
-__VERSION__ = '116.0.5845'
+with open('version.txt', 'r') as f:
+    __VERSION__ = f.readline().split()[1]
 DEPTH_LIMIT = 7
 
 def get_mode():
