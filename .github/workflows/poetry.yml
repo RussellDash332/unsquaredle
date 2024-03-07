@@ -1,4 +1,4 @@
-name: thanksgiving squaredle
+name: poetry squaredle
 on:
   workflow_dispatch:
 jobs:
@@ -20,7 +20,7 @@ jobs:
           chromium-browser --version > version.txt
           pip install -r requirements.txt
       - name: It's Squardlin time!
-        run: python main.py thanksgiving
+        run: python main.py poetry
         env:
           TOKEN: ${{ secrets.TOKEN }}
           CHATS: ${{ secrets.CHATS }}
