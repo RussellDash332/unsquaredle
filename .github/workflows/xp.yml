@@ -2,9 +2,9 @@ name: xp squaredle
 on:
   workflow_dispatch:
   schedule:
-    - cron: "55 9 * * *" # 10AM GMT - 5min
+    - cron: "45 9 * * *" # 10AM GMT - 15min
 jobs:
-  waffle:
+  squaredle:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -19,10 +19,9 @@ jobs:
           sudo apt purge google-chrome-stable
           sudo apt purge chromium-browser
           sudo apt install -y chromium-browser
-          chromium-browser --version > version.txt
           pip install -r requirements.txt
       - name: It's Squardlin time!
-        run: python main.py xp
+        run: python main.py -m xp -c 1
         env:
           TOKEN: ${{ secrets.TOKEN }}
           CHATS: ${{ secrets.CHATS }}

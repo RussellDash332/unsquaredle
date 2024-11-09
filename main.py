@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 import platform
@@ -21,14 +22,7 @@ logging.basicConfig(
 )
 
 # Constants
-with open('version.txt', 'r') as f:
-    __VERSION__ = f.readline().split()[1]
 DEPTH_LIMIT = 7
-
-def get_mode():
-    if len(sys.argv) == 1:  mode = 'daily'
-    else:                   mode = sys.argv[1].strip()
-    return mode
 
 def loop_resolve(f, resolution, lim, *args):
     if lim == 0:
@@ -49,8 +43,7 @@ def get_windows_browser():
     return browser
 
 def get_linux_browser():
-    version = __VERSION__
-    chrome_service = Service(ChromeDriverManager(chrome_type='chromium', driver_version=version).install())
+    chrome_service = Service(ChromeDriverManager(chrome_type='chromium').install())
     chrome_options = Options()
     options = [
         "--headless",
@@ -208,7 +201,7 @@ def send(token, chat_id, bot_message):
         })
     logging.info(resp.json().get('description') if not resp.ok else resp.ok)
 
-if __name__ == '__main__':
+def get_word_list():
     # populate word list, might take a while :)
     ss = set()
     urls = [
@@ -239,17 +232,26 @@ if __name__ == '__main__':
     ss |= set(w.strip() for w in open('data/special.txt').readlines())
     logging.info(f'Database of {len(ss)} words loaded!')
 
+if __name__ == '__main__':
+    ss = get_word_list()
     curr_os = (pf:=platform.platform())[:pf.find('-')]
     supplier = {'Windows': get_windows_browser, 'Linux': get_linux_browser}.get(curr_os)
     assert supplier, f'Unsquaredle not supported for {curr_os} yet :('
 
-    mode = get_mode()
-    t_parse, t_algo, t_selenium, verdict = loop_resolve(solve, lambda: None, 3, mode, supplier)
-    print()
-    print(f'Time to parse Squaredle board: {t_parse}')
-    print(f'Time to run backtracking: {t_algo}')
-    print(f'Time to apply candidate words on web: {t_selenium}')
-    print()
+    parser = argparse.ArgumentParser(prog='unsquaredle', description='Solve Squaredle in no time')
+    parser.add_argument('-m', '--mode', default='daily', help='Mode of puzzle')
+    parser.add_argument('-c', '--cron', default=0, help='Delay solving until new day (0 or 1)')
+    args = parser.parse_args()
+
+    if int(args.cron):
+        while (t:=int(time.time()%86400))//3600 < 10: # not 10AM GMT yet
+            time.sleep(10)
+            logging.info(f'Waiting... Current time: {str(t//3600).zfill(2)}:{str(t//60%60).zfill(2)}:{str(t%60).zfill(2)} GMT')
+
+    t_parse, t_algo, t_selenium, verdict = loop_resolve(solve, lambda: None, 3, args.mode.strip(), supplier)
+    print(f'\nTime to parse Squaredle board: {t_parse}', flush=True)
+    print(f'Time to run backtracking: {t_algo}', flush=True)
+    print(f'Time to apply candidate words on web: {t_selenium}\n', flush=True)
     print(verdict)
 
     # Telebot integration

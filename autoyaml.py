@@ -46,7 +46,7 @@ def make_content(puzzle):
 on:
   workflow_dispatch:
 jobs:
-  waffle:
+  squaredle:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -61,10 +61,9 @@ jobs:
           sudo apt purge google-chrome-stable
           sudo apt purge chromium-browser
           sudo apt install -y chromium-browser
-          chromium-browser --version > version.txt
           pip install -r requirements.txt
       - name: It's Squardlin time!
-        run: python main.py {puzzle}
+        run: python main.py -m {puzzle}
 {secrets}
 '''
     with open(os.path.join('.github', 'workflows', f'{puzzle}.yml'), 'w+') as f:
