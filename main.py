@@ -30,7 +30,7 @@ def loop_resolve(f, resolution, lim, *args):
     try:
         return f(*args)
     except Exception as e:
-        print('Issue found:', e)
+        print('Issue found:', e, flush=True)
         resolution()
         return loop_resolve(f, resolution, lim-1, *args)
 
@@ -160,7 +160,7 @@ def solve(mode, supplier):
     t3 = time.time()
     popups = browser.find_elements(By.CLASS_NAME, 'popup')
     for i in ans:
-        print(i)
+        print(i, flush=True)
         for _ in range(2):
             ActionChains(browser).send_keys(i).perform()
             ActionChains(browser).send_keys(Keys.ENTER).perform()
@@ -231,6 +231,7 @@ def get_word_list():
     ss |= set(w.strip() for w in open('data/litscape.txt').readlines())
     ss |= set(w.strip() for w in open('data/special.txt').readlines())
     logging.info(f'Database of {len(ss)} words loaded!')
+    return ss
 
 if __name__ == '__main__':
     ss = get_word_list()
