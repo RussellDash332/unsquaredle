@@ -1,11 +1,13 @@
 import os
 
 PUZZLES = [
+    '1k',
     '5star',
     '10x10',
     '10x10-2',
     'arbor-day-24',
     'arrrrr',
+    'canada-day-25',
     'discord200',
     'gemstones',
     'hajj-24',
@@ -13,18 +15,24 @@ PUZZLES = [
     'hanukkah23',
     'kwanzaa',
     'kwanzaa23',
+    'lirpa-loof',
     'medical',
+    'mothers-day-25',
+    'movember',
     'nye23',
     'olympics-24',
     'otherworldly',
     'pasta',
     'poetry',
+    'pride-25',
     'rare-disease',
     'reddit',
+    'sea-creatures',
     'special',
     'spooky',
     'spooky2',
     'spooky3',
+    'spooky-2025',
     'sub50',
     'sub500',
     'thanksgiving',
@@ -32,10 +40,13 @@ PUZZLES = [
     'uk',
     'valentine',
     'valentine24',
+    'valentine-25',
     'waffle-ingredients',
     'waffle',
     'waffle2',
-    'xmas'
+    'winter-24',
+    'xmas',
+    'xmas-25'
 ]
 
 def make_content(puzzle):

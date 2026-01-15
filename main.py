@@ -156,6 +156,9 @@ def solve(mode, supplier):
     ans = sorted(ans); ans.extend(ans[:3]) # retry first few for a good measure
     logging.info(f'Found {len(ans)} candidate words!')
 
+    if mode == 'lirpa-loof':
+        ans = [w[:-1] for w in ans]
+
     # try all!
     t3 = time.time()
     popups = browser.find_elements(By.CLASS_NAME, 'popup')
