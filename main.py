@@ -157,7 +157,7 @@ def solve(mode, supplier):
     logging.info(f'Found {len(ans)} candidate words!')
 
     if mode == 'lirpa-loof':
-        ans = [w[:-1] for w in ans]
+        ans = [w[::-1] for w in ans]
 
     # try all!
     t3 = time.time()
