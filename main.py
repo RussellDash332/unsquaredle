@@ -179,7 +179,7 @@ def solve(mode, supplier):
 
     # share results!
     t4 = time.time()
-    browser.find_element(By.XPATH, '/html/body/header/div/div[2]/button[2]').click() # it doesn't work without xpath?
+    browser.find_element(By.XPATH, '/html/body/div[1]/header/div/div[2]/button[2]').click() # it doesn't work without xpath?
     time.sleep(1) # wait to load if you are on top of some category
     soup = BeautifulSoup(browser.page_source, 'html.parser')
     try:
