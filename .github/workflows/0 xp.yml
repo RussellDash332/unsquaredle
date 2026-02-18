@@ -1,4 +1,4 @@
-name: xp squaredle
+name: 0 xp squaredle
 on:
   workflow_dispatch:
   schedule:

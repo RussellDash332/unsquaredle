@@ -1,4 +1,4 @@
-name: daily squaredle
+name: 0 daily squaredle
 on:
   workflow_dispatch:
   schedule:
