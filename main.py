@@ -209,6 +209,7 @@ def get_word_list():
     # populate word list, might take a while :)
     ss = set()
     urls = [
+        'https://people.sc.fsu.edu/~jburkardt/datasets/words/wordlist.txt',
         'https://raw.githubusercontent.com/scrabblewords/scrabblewords/main/words/North-American/6-letter-stems.txt',
         'https://raw.githubusercontent.com/scrabblewords/scrabblewords/main/words/North-American/7-letter-stems.txt',
         'https://raw.githubusercontent.com/scrabblewords/scrabblewords/main/words/North-American/NSWL2020.txt',
@@ -228,7 +229,11 @@ def get_word_list():
         'https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt',
         'https://gist.githubusercontent.com/deostroll/7693b6f3d48b44a89ee5f57bf750bd32/raw/426f564cf73b4c87d2b2c46ccded8a5b98658ce1/dictionary.txt',
         'https://raw.githubusercontent.com/Fj00/CEL/master/cel_2-45.txt',
-        'https://people.sc.fsu.edu/~jburkardt/datasets/words/wordlist.txt'
+        'https://raw.githubusercontent.com/en-wl/wordlist/refs/heads/v2/docs/comp-60.txt',
+        'https://raw.githubusercontent.com/taikuukaits/SimpleWordlists/refs/heads/master/Wordlist-Adjectives-All.txt',
+        'https://raw.githubusercontent.com/taikuukaits/SimpleWordlists/refs/heads/master/Wordlist-Adverbs-All.txt',
+        'https://raw.githubusercontent.com/taikuukaits/SimpleWordlists/refs/heads/master/Wordlist-Nouns-All.txt',
+        'https://raw.githubusercontent.com/taikuukaits/SimpleWordlists/refs/heads/master/Wordlist-Verbs-All.txt'
     ]
     for url in urls:
         try: ss |= {*(i for i in requests.get(url).content.decode().upper().replace('\n', ' ').split() if all('A'<=l<='Z' for l in i) and len(i)>3)}; logging.info(f'{len(ss)} {url}')
@@ -241,7 +246,11 @@ def get_word_list():
         else: logging.info(f'{len(ss)} FAIL ({r.status_code}) {length}')
     '''
     ss |= set(w.strip() for w in open('data/litscape.txt').readlines())
+    logging.info(f'{len(ss)} data/litscape.txt')
     ss |= set(w.strip() for w in open('data/special.txt').readlines())
+    logging.info(f'{len(ss)} data/special.txt')
+    ss |= {(w+'s' if w[-1]!='s' else w+'es' if w[-2:]!='es' else w) for w in ss}
+    logging.info(f'{len(ss)} adding stupid plurals')
     logging.info(f'Database of {len(ss)} words loaded!')
     return ss
 
