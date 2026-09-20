@@ -249,7 +249,7 @@ def get_word_list():
     logging.info(f'{len(ss)} data/litscape.txt')
     ss |= set(w.strip() for w in open('data/special.txt').readlines())
     logging.info(f'{len(ss)} data/special.txt')
-    ss |= {(w+'s' if w[-1]!='s' else w+'es' if w[-2:]!='es' else w) for w in ss}
+    ss |= {(w+'S' if w[-1]!='S' else w+'ES' if w[-2:]!='ES' else w) for w in ss}
     logging.info(f'{len(ss)} adding stupid plurals')
     logging.info(f'Database of {len(ss)} words loaded!')
     return ss
