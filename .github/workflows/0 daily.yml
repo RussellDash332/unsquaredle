@@ -2,7 +2,7 @@ name: 0 daily squaredle
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * *" # 2:00 PM SGT, 4 hours before the 6:00 PM daily release
+    - cron: "0 4 * * *" # 12:00 PM SGT, 6 hours before the 6:00 PM daily release
 jobs:
   squaredle:
     runs-on: ubuntu-latest
